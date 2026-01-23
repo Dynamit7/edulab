@@ -1,0 +1,93 @@
+body {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100vw;
+	height: 100vh;
+}
+
+.form_login {
+	display: flex;
+	flex-direction: column;
+	width: 30%;
+	height: 30%;
+	border: solid 3px whitesmoke;
+	border-radius: 5px;
+	padding: 5px;
+	align-items: center;
+	justify-content: center;
+}
+
+.form_login h3 {
+	display: inline-block;
+}
+
+#loginForm {
+	display: flex;
+	width: 95%;
+	height: 95%;
+	flex-direction: column;
+	border-radius: 1%;
+	align-items: center;
+	justify-content: space-evenly;
+	background-color: whitesmoke;
+}
+
+#loginForm label {
+	display: inline-flex;
+	flex-direction: column;
+	width: 80%;
+	align-items: center;
+	justify-content: center;
+}
+
+#loginForm label input {
+	outline: none;
+	height: 30%;
+}
+
+#loginForm label > input {
+	width: 100%;
+}
+
+#loginForm label div {
+	display: inline-flex;
+	align-items: center;
+	width: 100%;
+	height: 30%;
+}
+
+#loginForm label div > input {
+	width: 85%;
+	height: 100%;
+}
+
+.passwordHide {
+	display: inline-flex;
+	width: 10%;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	background: none;
+	border: none;
+	outline: none;
+}
+
+.passwordHide:hover {
+	cursor: pointer;
+}
+
+.signInButton {
+	background: none;
+	border: none;
+	outline: none;
+	width: 50%;
+	height: 10%;
+	border-radius: 3px;
+	background-color: rgb(44, 44, 254);
+	color: white;
+}
+
+.signInButton:hover {
+	cursor: pointer;
+}

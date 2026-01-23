@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/css/normalize.css" />
+		<link rel="stylesheet" href="/css/font.css" />
+		<link rel="stylesheet" href="/css/login.css" />
+		<script defer src="/js/login.js"></script>
+		<title>Login</title>
+	</head>
+	<body>
+		<div class="form_login">
+			<h3>Edulab</h3>
+			<form id="loginForm">
+				<label>
+					<p>Username</p>
+					<input
+						type="text"
+						placeholder="username"
+						id="username_input"
+						required
+					/>
+				</label>
+				<label>
+					<p>Password</p>
+					<div>
+						<input
+							type="password"
+							placeholder="password"
+							id="password_input"
+							required
+						/>
+						<button class="passwordHide">
+							<img src="/icons/view.png" alt="view" width="20" height="20" />
+						</button>
+					</div>
+				</label>
+				<button class="signInButton">Sign In</button>
+			</form>
+		</div>
+	</body>
+</html>

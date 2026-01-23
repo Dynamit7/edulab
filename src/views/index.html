@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Учебный центр</title>
+		<link rel="stylesheet" href="/css/styles.css" />
+	</head>
+	<body>
+		<div class="app">
+			<!-- Бургер меню / боковая панель -->
+			<aside class="sidebar">
+				<div class="burger">
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<nav class="menu">
+					<button class="tab active" data-tab="students">Все ученики</button>
+					<button class="tab" data-tab="teachers">Все учителя</button>
+					<button class="tab" data-tab="admins">Администраторы</button>
+					<button class="tab" data-tab="schedule">Расписание уроков</button>
+					<button class="tab" data-tab="subjects">Предметы</button>
+					<button class="tab" data-tab="rooms">Комнаты</button>
+					<button class="tab" data-tab="add-user">Добавить пользователя</button>
+				</nav>
+			</aside>
+
+			<!-- Основной контент -->
+			<div class="main-content">
+				<!-- Профиль -->
+				<div class="profile-card">
+					<p>Джамалиддин Рихсиев</p>
+					<p>Суперпользователь</p>
+				</div>
+
+				<main class="content">
+					<!-- Все ученики -->
+					<section class="tab-content active" id="students">
+						<div class="cards">
+							<div class="card">
+								<h3>Иван Петров</h3>
+								<p>Группа: A1</p>
+								<p>Возраст: 16</p>
+							</div>
+						</div>
+					</section>
+
+					<!-- Все учителя -->
+					<section class="tab-content" id="teachers">
+						<div class="cards">
+							<div class="card">
+								<h3>Анна Смирнова</h3>
+								<p>Предмет: Математика</p>
+							</div>
+						</div>
+					</section>
+
+					<!-- Администраторы -->
+					<section class="tab-content" id="admins">
+						<div class="cards">
+							<div class="card">
+								<h3>Администратор</h3>
+								<p>Роль: Суперадмин</p>
+							</div>
+						</div>
+					</section>
+
+					<!-- Расписание -->
+					<section class="tab-content" id="schedule">
+						<div class="cards">
+							<div class="card">
+								<h3>Понедельник</h3>
+								<p>09:00 — Математика</p>
+								<p>11:00 — Физика</p>
+							</div>
+						</div>
+					</section>
+
+					<!-- Предметы -->
+					<section class="tab-content" id="subjects">
+						<div class="cards">
+							<div class="card">
+								<h3>Математика</h3>
+								<p>Часов в неделю: 5</p>
+							</div>
+						</div>
+					</section>
+
+					<!-- Комнаты -->
+					<section class="tab-content" id="rooms">
+						<div class="cards">
+							<div class="card">
+								<h3>Комната 101</h3>
+								<p>Вместимость: 25</p>
+							</div>
+						</div>
+					</section>
+
+					<!-- Добавить пользователя -->
+					<section class="tab-content" id="add-user">
+						<form class="add-user-form">
+							<input type="text" placeholder="Имя" name="firstName" required />
+							<input
+								type="text"
+								placeholder="Фамилия"
+								name="lastName"
+								required
+							/>
+							<input type="text" placeholder="Логин" name="login" required />
+							<input
+								type="password"
+								placeholder="Пароль"
+								name="password"
+								required
+							/>
+							<button type="submit">Добавить</button>
+						</form>
+					</section>
+				</main>
+			</div>
+		</div>
+
+		<script src="/js/main.js"></script>
+	</body>
+</html>
