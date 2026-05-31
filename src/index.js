@@ -1,17 +1,21 @@
 import express from "express";
-import path from "path";
+import { join } from "path";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routers/userRouter.js";
-import { jwtsecret } from "./config.js";
+import { jwtsecret, rootPath } from "./config.js";
 import jwt from "jsonwebtoken";
+import ejs from "ejs";
 
 const app = express();
 
-app.use(express.static(path.join(process.cwd(), "src", "assets")));
+app.set("view engine", "ejs");
+
+app.use(express.static(join(rootPath, "src", "assets")));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use((req, res, next) => {
 	// если нет токена и это не /login
 	if (!req.cookies.token && req.path !== "/login") {
@@ -34,14 +38,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/", userRoutes);
-
-app.get("/", (req, res) => {
-	res.sendFile(path.join(process.cwd(), "src", "views", "index.html"));
-});
-
-app.get("/login", (req, res) => {
-	res.sendFile(path.join(process.cwd(), "src", "views", "login.html"));
-});
 
 app.listen(3000, () => {
 	console.log("listen on 3000");

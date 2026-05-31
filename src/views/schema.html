@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Edulab — Database Schema</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+
+			:root {
+				--accent: #6366f1;
+				--accent2: #8b5cf6;
+				--bg: #080810;
+				--surface: #0f0f1a;
+				--border: rgba(99, 102, 241, 0.15);
+				--text: #e2e2f0;
+				--muted: rgba(226, 226, 240, 0.4);
+			}
+
+			html,
+			body {
+				min-height: 100vh;
+				background: var(--bg);
+				color: var(--text);
+				font-family: "DM Sans", sans-serif;
+			}
+
+			/* Background */
+			.bg-layer {
+				position: fixed;
+				inset: 0;
+				pointer-events: none;
+				z-index: 0;
+			}
+
+			.bg-grid {
+				position: absolute;
+				inset: 0;
+				background-image:
+					linear-gradient(
+						rgba(99, 102, 241, 0.05) 1px,
+						transparent 1px
+					),
+					linear-gradient(
+						90deg,
+						rgba(99, 102, 241, 0.05) 1px,
+						transparent 1px
+					);
+				background-size: 40px 40px;
+			}
+
+			.bg-radial {
+				position: absolute;
+				inset: 0;
+				background: radial-gradient(
+					ellipse 80% 60% at 50% 0%,
+					rgba(99, 102, 241, 0.12) 0%,
+					transparent 70%
+				);
+			}
+
+			.bg-orb {
+				position: absolute;
+				border-radius: 50%;
+				filter: blur(80px);
+			}
+			.orb1 {
+				width: 500px;
+				height: 500px;
+				background: rgba(99, 102, 241, 0.08);
+				top: -150px;
+				right: -100px;
+				animation: orb1 12s ease-in-out infinite;
+			}
+			.orb2 {
+				width: 300px;
+				height: 300px;
+				background: rgba(139, 92, 246, 0.06);
+				bottom: -80px;
+				left: -60px;
+				animation: orb2 15s ease-in-out infinite;
+			}
+
+			@keyframes orb1 {
+				0%,
+				100% {
+					transform: translate(0, 0);
+				}
+				50% {
+					transform: translate(-30px, 40px);
+				}
+			}
+			@keyframes orb2 {
+				0%,
+				100% {
+					transform: translate(0, 0);
+				}
+				50% {
+					transform: translate(30px, -30px);
+				}
+			}
+
+			/* Layout */
+			.page {
+				position: relative;
+				z-index: 1;
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* Header */
+			header {
+				padding: 28px 40px 0;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				animation: fadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+			}
+
+			.brand {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+
+			.brand-mark {
+				width: 38px;
+				height: 38px;
+				background: linear-gradient(
+					135deg,
+					var(--accent),
+					var(--accent2)
+				);
+				border-radius: 10px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-family: "Syne", sans-serif;
+				font-weight: 800;
+				font-size: 13px;
+				color: white;
+				letter-spacing: -0.5px;
+				flex-shrink: 0;
+			}
+
+			.brand-text {
+				font-family: "Syne", sans-serif;
+				font-weight: 700;
+				font-size: 18px;
+				color: #fff;
+			}
+			.brand-text span {
+				color: var(--accent);
+			}
+
+			.header-badge {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				padding: 6px 14px;
+				background: rgba(99, 102, 241, 0.1);
+				border: 1px solid rgba(99, 102, 241, 0.2);
+				border-radius: 999px;
+				font-family: "JetBrains Mono", monospace;
+				font-size: 11px;
+				color: rgba(99, 102, 241, 0.9);
+			}
+
+			.badge-dot {
+				width: 6px;
+				height: 6px;
+				background: var(--accent);
+				border-radius: 50%;
+				animation: pulse 2s ease-in-out infinite;
+			}
+
+			@keyframes pulse {
+				0%,
+				100% {
+					opacity: 1;
+					transform: scale(1);
+				}
+				50% {
+					opacity: 0.5;
+					transform: scale(0.8);
+				}
+			}
+
+			/* Hero */
+			.hero {
+				padding: 40px 40px 32px;
+				animation: fadeUp 0.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+			}
+
+			.hero h1 {
+				font-family: "Syne", sans-serif;
+				font-size: clamp(28px, 4vw, 42px);
+				font-weight: 800;
+				color: #fff;
+				letter-spacing: -1px;
+				line-height: 1.1;
+			}
+
+			.hero h1 em {
+				font-style: normal;
+				background: linear-gradient(
+					135deg,
+					var(--accent),
+					var(--accent2),
+					#ec4899
+				);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+
+			.hero-sub {
+				margin-top: 10px;
+				font-size: 14px;
+				color: var(--muted);
+				font-weight: 300;
+			}
+
+			/* Stats bar */
+			.stats {
+				display: flex;
+				gap: 0;
+				margin: 0 40px 32px;
+				background: rgba(255, 255, 255, 0.02);
+				border: 1px solid var(--border);
+				border-radius: 16px;
+				overflow: hidden;
+				animation: fadeUp 0.6s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+			}
+
+			.stat {
+				flex: 1;
+				padding: 18px 24px;
+				border-right: 1px solid var(--border);
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+			}
+			.stat:last-child {
+				border-right: none;
+			}
+
+			.stat-value {
+				font-family: "Syne", sans-serif;
+				font-size: 24px;
+				font-weight: 700;
+				color: #fff;
+				letter-spacing: -0.5px;
+			}
+
+			.stat-label {
+				font-size: 12px;
+				color: var(--muted);
+				font-weight: 300;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+
+			/* Diagram container */
+			.diagram-wrapper {
+				flex: 1;
+				margin: 0 40px 40px;
+				background: rgba(255, 255, 255, 0.02);
+				border: 1px solid var(--border);
+				border-radius: 20px;
+				overflow: hidden;
+				position: relative;
+				animation: fadeUp 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+			}
+
+			.diagram-toolbar {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 14px 20px;
+				border-bottom: 1px solid var(--border);
+				background: rgba(255, 255, 255, 0.01);
+			}
+
+			.toolbar-dots {
+				display: flex;
+				gap: 6px;
+			}
+			.dot {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+			}
+			.dot-red {
+				background: #ff5f57;
+			}
+			.dot-yellow {
+				background: #febc2e;
+			}
+			.dot-green {
+				background: #28c840;
+			}
+
+			.toolbar-title {
+				font-family: "JetBrains Mono", monospace;
+				font-size: 11px;
+				color: var(--muted);
+			}
+
+			.toolbar-actions {
+				display: flex;
+				gap: 8px;
+			}
+
+			.toolbar-btn {
+				padding: 5px 12px;
+				background: rgba(99, 102, 241, 0.1);
+				border: 1px solid rgba(99, 102, 241, 0.2);
+				border-radius: 6px;
+				font-family: "JetBrains Mono", monospace;
+				font-size: 10px;
+				color: rgba(99, 102, 241, 0.8);
+				cursor: pointer;
+				transition:
+					background 0.15s,
+					color 0.15s;
+			}
+			.toolbar-btn:hover {
+				background: rgba(99, 102, 241, 0.2);
+				color: #fff;
+			}
+
+			.diagram-scroll {
+				overflow: auto;
+				padding: 32px;
+				max-height: calc(100vh - 320px);
+				min-height: 400px;
+			}
+
+			.diagram-scroll::-webkit-scrollbar {
+				width: 6px;
+				height: 6px;
+			}
+			.diagram-scroll::-webkit-scrollbar-track {
+				background: transparent;
+			}
+			.diagram-scroll::-webkit-scrollbar-thumb {
+				background: rgba(99, 102, 241, 0.3);
+				border-radius: 3px;
+			}
+			.diagram-scroll::-webkit-scrollbar-thumb:hover {
+				background: rgba(99, 102, 241, 0.5);
+			}
+
+			#erd {
+				width: 100%;
+			}
+
+			/* Override mermaid SVG styles */
+			#erd svg {
+				font-family: "JetBrains Mono", monospace !important;
+				max-width: 100%;
+			}
+
+			/* Loading state */
+			.loading-state {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 16px;
+				padding: 80px;
+				color: var(--muted);
+			}
+
+			.loading-ring {
+				width: 32px;
+				height: 32px;
+				border: 2px solid rgba(99, 102, 241, 0.2);
+				border-top-color: var(--accent);
+				border-radius: 50%;
+				animation: spin 0.8s linear infinite;
+			}
+
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+
+			.loading-text {
+				font-family: "JetBrains Mono", monospace;
+				font-size: 12px;
+			}
+
+			/* Footer */
+			footer {
+				padding: 0 40px 28px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				animation: fadeUp 0.6s 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+			}
+
+			.footer-note {
+				font-size: 12px;
+				color: rgba(255, 255, 255, 0.15);
+				font-family: "JetBrains Mono", monospace;
+			}
+
+			.legend {
+				display: flex;
+				gap: 16px;
+				align-items: center;
+			}
+
+			.legend-item {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				font-size: 11px;
+				color: var(--muted);
+			}
+
+			.legend-key {
+				padding: 2px 7px;
+				border-radius: 4px;
+				font-family: "JetBrains Mono", monospace;
+				font-size: 10px;
+				font-weight: 500;
+			}
+
+			.legend-pk {
+				background: rgba(251, 191, 36, 0.15);
+				color: #fbbf24;
+				border: 1px solid rgba(251, 191, 36, 0.25);
+			}
+			.legend-fk {
+				background: rgba(99, 102, 241, 0.15);
+				color: #818cf8;
+				border: 1px solid rgba(99, 102, 241, 0.25);
+			}
+
+			@keyframes fadeUp {
+				from {
+					opacity: 0;
+					transform: translateY(16px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			@keyframes fadeDown {
+				from {
+					opacity: 0;
+					transform: translateY(-12px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			@media (max-width: 640px) {
+				header,
+				.hero,
+				.stats,
+				.diagram-wrapper,
+				footer {
+					margin-left: 16px;
+					margin-right: 16px;
+				}
+				header {
+					padding: 20px 0 0;
+				}
+				.hero {
+					padding: 24px 0 20px;
+				}
+				.stats {
+					margin: 0 0 20px;
+					flex-wrap: wrap;
+				}
+				.stat {
+					min-width: 50%;
+				}
+				.diagram-wrapper {
+					margin: 0 0 24px;
+				}
+				footer {
+					padding: 0 0 20px;
+					flex-direction: column;
+					gap: 12px;
+					align-items: flex-start;
+				}
+				.header-badge {
+					display: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="bg-layer">
+			<div class="bg-grid"></div>
+			<div class="bg-radial"></div>
+			<div class="bg-orb orb1"></div>
+			<div class="bg-orb orb2"></div>
+		</div>
+
+		<div class="page">
+			<header>
+				<div class="brand">
+					<div class="brand-mark">EL</div>
+					<div class="brand-text">Edu<span>lab</span></div>
+				</div>
+				<div class="header-badge">
+					<div class="badge-dot"></div>
+					PostgreSQL · edulab
+				</div>
+			</header>
+
+			<div class="hero">
+				<h1>Database <em>Schema</em></h1>
+				<p class="hero-sub">
+					Entity–Relationship Diagram · edulab v1.0
+				</p>
+			</div>
+
+			<div class="stats">
+				<div class="stat">
+					<div class="stat-value">10</div>
+					<div class="stat-label">Tables</div>
+				</div>
+				<div class="stat">
+					<div class="stat-value">12</div>
+					<div class="stat-label">Relations</div>
+				</div>
+				<div class="stat">
+					<div class="stat-value">5</div>
+					<div class="stat-label">Roles</div>
+				</div>
+				<div class="stat">
+					<div class="stat-value">UTF-8</div>
+					<div class="stat-label">Encoding</div>
+				</div>
+			</div>
+
+			<div class="diagram-wrapper">
+				<div class="diagram-toolbar">
+					<div class="toolbar-dots">
+						<div class="dot dot-red"></div>
+						<div class="dot dot-yellow"></div>
+						<div class="dot dot-green"></div>
+					</div>
+					<div class="toolbar-title">schema.erDiagram</div>
+					<div class="toolbar-actions">
+						<button
+							class="toolbar-btn"
+							onclick="
+								document
+									.querySelector('.diagram-scroll')
+									.scrollTo(0, 0)
+							"
+						>
+							↑ top
+						</button>
+						<button class="toolbar-btn" onclick="window.print()">
+							export
+						</button>
+					</div>
+				</div>
+				<div class="diagram-scroll">
+					<div class="loading-state" id="loading">
+						<div class="loading-ring"></div>
+						<div class="loading-text">Rendering schema...</div>
+					</div>
+					<div id="erd"></div>
+				</div>
+			</div>
+
+			<footer>
+				<div class="footer-note">generated · edulab lms · 2025</div>
+				<div class="legend">
+					<div class="legend-item">
+						<span class="legend-key legend-pk">PK</span> Primary key
+					</div>
+					<div class="legend-item">
+						<span class="legend-key legend-fk">FK</span> Foreign key
+					</div>
+				</div>
+			</footer>
+		</div>
+
+		<script type="module">
+			import mermaid from "https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs";
+
+			await document.fonts.ready;
+
+			mermaid.initialize({
+				startOnLoad: false,
+				theme: "base",
+				fontFamily: '"JetBrains Mono", monospace',
+				themeVariables: {
+					darkMode: true,
+					fontSize: "12px",
+					fontFamily: '"JetBrains Mono", monospace',
+					primaryColor: "#13132a",
+					primaryBorderColor: "#6366f1",
+					primaryTextColor: "#808080",
+					lineColor: "#6366f1",
+					edgeLabelBackground: "#0f0f1a",
+					attributeBackgroundColorEven: "#0d0d1e",
+					attributeBackgroundColorOdd: "#111128",
+					tertiaryColor: "#0a0a18",
+					background: "#080810",
+				},
+			});
+
+			const diagram = `erDiagram
+  users {
+    serial id PK
+    varchar name
+    varchar phone_number
+    varchar email
+    varchar telegram_username
+    user_role role
+    varchar login
+    varchar password_hash
+    int status
+    timestamptz created_at
+    int created_by FK
+  }
+  disciplines {
+    serial id PK
+    varchar title
+    int status
+    int created_by FK
+    timestamptz created_at
+  }
+  groups {
+    serial id PK
+    varchar title
+    int teacher_id FK
+    int discipline_id FK
+    int branch_id FK
+    int created_by FK
+    int status
+    timestamptz created_at
+  }
+  branches {
+    serial id PK
+    varchar title
+    varchar address
+    varchar phone_number
+    varchar email
+    int status
+  }
+  rooms {
+    serial id PK
+    varchar title
+    int branch_id FK
+    int capacity
+  }
+  student_groups {
+    serial id PK
+    int student_id FK
+    int group_id FK
+    int balance
+    timestamptz joined_at
+    timestamptz frozen_till
+    timestamptz left_at
+  }
+  schedule {
+    serial id PK
+    int group_id FK
+    int room_id FK
+    int weekday
+    time start_time
+    time end_time
+  }
+  attendance {
+    serial id PK
+    int student_id FK
+    int group_id FK
+    date visit_date
+    int created_by FK
+  }
+  payments {
+    serial id PK
+    int student_id FK
+    int group_id FK
+    int amount
+    varchar status
+    int created_by FK
+    timestamptz created_at
+  }
+  audit_log {
+    bigserial id PK
+    varchar table_name
+    varchar operation
+    int record_id
+    jsonb old_data
+    jsonb new_data
+    int changed_by FK
+    timestamptz changed_at
+  }
+
+  users ||--o{ groups : "teaches"
+  disciplines ||--o{ groups : "subject"
+  branches ||--o{ groups : "hosted_in"
+  branches ||--o{ rooms : "has"
+  groups ||--o{ student_groups : "enrolls"
+  users ||--o{ student_groups : "is_student"
+  groups ||--o{ schedule : "has"
+  rooms ||--o{ schedule : "used_in"
+  groups ||--o{ attendance : "tracks"
+  users ||--o{ attendance : "attends"
+  groups ||--o{ payments : "paid_for"
+  users ||--o{ payments : "pays"`;
+
+			const { svg } = await mermaid.render("erd-svg", diagram);
+
+			document.getElementById("loading").style.display = "none";
+			document.getElementById("erd").innerHTML = svg;
+
+			document.querySelectorAll("#erd svg .node").forEach((node) => {
+				const firstPath = node.querySelector("path[d]");
+				if (!firstPath) return;
+				const d = firstPath.getAttribute("d");
+				const nums = d.match(/-?[\d.]+/g)?.map(Number);
+				if (!nums || nums.length < 8) return;
+				const xs = [nums[0], nums[2], nums[4], nums[6]];
+				const ys = [nums[1], nums[3], nums[5], nums[7]];
+				const x = Math.min(...xs),
+					y = Math.min(...ys);
+				const w = Math.max(...xs) - x,
+					h = Math.max(...ys) - y;
+				const rect = document.createElementNS(
+					"http://www.w3.org/2000/svg",
+					"rect",
+				);
+				rect.setAttribute("x", x);
+				rect.setAttribute("y", y);
+				rect.setAttribute("width", w);
+				rect.setAttribute("height", h);
+				rect.setAttribute("rx", "8");
+				for (const a of [
+					"fill",
+					"stroke",
+					"stroke-width",
+					"class",
+					"style",
+				]) {
+					if (firstPath.hasAttribute(a))
+						rect.setAttribute(a, firstPath.getAttribute(a));
+				}
+				firstPath.replaceWith(rect);
+			});
+
+			document
+				.querySelectorAll(
+					"#erd svg .row-rect-odd path, #erd svg .row-rect-even path",
+				)
+				.forEach((p) => {
+					p.setAttribute("stroke", "none");
+				});
+
+			/* PK/FK coloring */
+			document.querySelectorAll("#erd svg text").forEach((t) => {
+				const txt = t.textContent?.trim();
+				if (txt === "PK") {
+					t.style.fill = "#fbbf24";
+					t.style.fontWeight = "600";
+				} else if (txt === "FK") {
+					t.style.fill = "#818cf8";
+					t.style.fontWeight = "600";
+				}
+			});
+		</script>
+	</body>
+</html>
