@@ -1,0 +1,196 @@
+  generator client {
+    provider = "prisma-client-js"
+  }
+
+  datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+  }
+
+  // Роли: 5=Student, 8=Teacher, 10=Supervisor, 12=Admin, 15=Root
+  // (CHECK-констрейнт role IN (5,8,10,12,15) добавлен миграцией / валидируется в коде)
+
+  model User {
+    id               Int      @id @default(autoincrement())
+    name             String
+    phoneNumber      String   @unique @map("phone_number") @db.VarChar(13)
+    email            String?  @unique
+    telegramUsername String?  @unique @map("telegram_username")
+    role             Int      @default(5)
+    login            String   @unique @db.VarChar(50)
+    passwordHash     String   @map("password_hash")
+    status           Int      @default(1)
+    createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+    createdById Int?  @map("created_by")
+    createdBy   User? @relation("UserCreated", fields: [createdById], references: [id])
+    createdUsers User[] @relation("UserCreated")
+
+    disciplinesCreated Discipline[]   @relation("DisciplineCreator")
+    groupsTeaching     Group[]        @relation("GroupTeacher")
+    groupsCreated      Group[]        @relation("GroupCreator")
+    studentGroups      StudentGroup[] @relation("StudentGroupStudent")
+    attendances        Attendance[]   @relation("AttendanceStudent")
+    attendancesCreated Attendance[]   @relation("AttendanceCreator")
+    payments           Payment[]      @relation("PaymentStudent")
+    paymentsCreated    Payment[]      @relation("PaymentCreator")
+    auditLogs          AuditLog[]     @relation("AuditChanger")
+
+    @@index([role])
+    @@map("users")
+  }
+
+  model Branch {
+    id          Int     @id @default(autoincrement())
+    title       String
+    address     String  @default("online")
+    phoneNumber String? @map("phone_number") @db.VarChar(13)
+    email       String? @unique
+    status      Int     @default(1)
+
+    rooms  Room[]
+    groups Group[]
+
+    @@map("branches")
+  }
+
+  model Room {
+    id       Int    @id @default(autoincrement())
+    title    String
+    capacity Int
+
+    branchId Int    @map("branch_id")
+    branch   Branch @relation(fields: [branchId], references: [id])
+
+    schedules Schedule[]
+
+    @@map("rooms")
+  }
+
+  model Discipline {
+    id        Int      @id @default(autoincrement())
+    title     String
+    status    Int      @default(1)
+    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+    createdById Int?  @map("created_by")
+    createdBy   User? @relation("DisciplineCreator", fields: [createdById], references: [id])
+
+    groups Group[]
+
+    @@map("disciplines")
+  }
+
+  model Group {
+    id        Int      @id @default(autoincrement())
+    title     String
+    status    Int      @default(1)
+    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+    teacherId    Int        @map("teacher_id")
+    teacher      User       @relation("GroupTeacher", fields: [teacherId], references: [id])
+    disciplineId Int        @map("discipline_id")
+    discipline   Discipline @relation(fields: [disciplineId], references: [id])
+    branchId     Int        @map("branch_id")
+    branch       Branch     @relation(fields: [branchId], references: [id])
+
+    createdById Int?  @map("created_by")
+    createdBy   User? @relation("GroupCreator", fields: [createdById], references: [id])
+
+    studentGroups StudentGroup[]
+    schedules     Schedule[]
+    attendances   Attendance[]
+    payments      Payment[]
+
+    @@index([teacherId])
+    @@index([disciplineId])
+    @@index([branchId])
+    @@map("groups")
+  }
+
+  model StudentGroup {
+    id         Int       @id @default(autoincrement())
+    balance    Int       @default(0)
+    joinedAt   DateTime  @default(now()) @map("joined_at") @db.Timestamptz()
+    frozenTill DateTime? @map("frozen_till") @db.Timestamptz()
+    leftAt     DateTime? @map("left_at") @db.Timestamptz()
+
+    studentId Int   @map("student_id")
+    student   User  @relation("StudentGroupStudent", fields: [studentId], references: [id])
+    groupId   Int   @map("group_id")
+    group     Group @relation(fields: [groupId], references: [id])
+
+    @@unique([studentId, groupId])
+    @@index([groupId])
+    @@map("student_groups")
+  }
+
+  model Schedule {
+    id        Int      @id @default(autoincrement())
+    weekday   Int // 1-7
+    startTime DateTime @map("start_time") @db.Time()
+    endTime   DateTime @map("end_time") @db.Time()
+
+    groupId Int   @map("group_id")
+    group   Group @relation(fields: [groupId], references: [id])
+    roomId  Int   @map("room_id")
+    room    Room  @relation(fields: [roomId], references: [id])
+
+    @@index([groupId])
+    @@index([roomId])
+    @@map("schedule")
+  }
+
+  model Attendance {
+    id        Int      @id @default(autoincrement())
+    visitDate DateTime @map("visit_date") @db.Date
+
+    studentId Int   @map("student_id")
+    student   User  @relation("AttendanceStudent", fields: [studentId], references: [id])
+    groupId   Int   @map("group_id")
+    group     Group @relation(fields: [groupId], references: [id])
+
+    createdById Int?  @map("created_by")
+    createdBy   User? @relation("AttendanceCreator", fields: [createdById], references: [id])
+
+    @@unique([studentId, groupId, visitDate])
+    @@index([groupId])
+    @@index([visitDate])
+    @@map("attendance")
+  }
+
+  model Payment {
+    id        Int      @id @default(autoincrement())
+    amount    Int
+    status    String
+    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+    studentId Int   @map("student_id")
+    student   User  @relation("PaymentStudent", fields: [studentId], references: [id])
+    groupId   Int   @map("group_id")
+    group     Group @relation(fields: [groupId], references: [id])
+
+    createdById Int?  @map("created_by")
+    createdBy   User? @relation("PaymentCreator", fields: [createdById], references: [id])
+
+    @@index([studentId])
+    @@index([createdAt])
+    @@map("payments")
+  }
+
+  model AuditLog {
+    id        BigInt   @id @default(autoincrement())
+    tableName String   @map("table_name")
+    operation String
+    recordId  Int?     @map("record_id")
+    oldData   Json?    @map("old_data")
+    newData   Json?    @map("new_data")
+    changedAt DateTime @default(now()) @map("changed_at") @db.Timestamptz()
+
+    changedById Int?  @map("changed_by")
+    changedBy   User? @relation("AuditChanger", fields: [changedById], references: [id])
+
+    @@index([tableName])
+    @@index([changedAt])
+    @@map("audit_log")
+  }
